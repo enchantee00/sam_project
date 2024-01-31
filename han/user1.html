@@ -5,15 +5,16 @@
     <title>마커 생성하기</title>
     
 </head>
+<link rel="stylesheet" href="user1.css">
 <body>
-<div id="map" style="width:100%;height:350px;"></div>
+<div id="map" style="width:100%;height:1024px;"></div>
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c7c6de6fc34909b79194ba08d65db5a4"></script>
 <script>
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = { 
-        center: new kakao.maps.LatLng(35.0831, 129.0469), // 지도의 중심좌표
-        level: 4 // 지도의 확대 레벨
+        center: new kakao.maps.LatLng(35.086, 129.043), // 지도의 중심좌표
+        level: 1 // 지도의 확대 레벨
     };
 
 var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
@@ -21,36 +22,47 @@ var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니
 var positions = [
     {
         title: 'room1', 
-        latlng: new kakao.maps.LatLng(35.08528183019429 , 129.03870752959813)
+		content: '<div class="wrap">' + 
+            '    <div class="info">' + 
+            '        <div class="title">' + 
+            '            ROOM1' + 
+            '            <div class="close" onclick="overlay.setMap(null)" title="닫기"></div>' + 
+            '        </div>' + 
+            '        <div class="body">' + 
+            '            <div class="img">' +
+            '                <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="73" height="70">' +
+            '           </div>' + 
+            '            <div class="desc">' + 
+            '                <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>' + 
+            '                <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>' + 
+            '                <div><a href="https://www.kakaocorp.com/main" target="_blank" class="link">홈페이지</a></div>' + 
+            '            </div>' + 
+            '        </div>' + 
+            '    </div>' +    
+            '</div>',
+        latlng: new kakao.maps.LatLng(35.08667248125351, 129.04228610486916 )
     },
     {
         title: 'room2', 
-        latlng: new kakao.maps.LatLng(35.08320815020199, 129.03876554433452)
+		content: '<div>room2</div>',
+        latlng: new kakao.maps.LatLng(35.08601202115504, 129.04203940311282 )
     },
     {
         title: 'room3', 
-        latlng: new kakao.maps.LatLng(35.08214281249755, 129.04209367897317)
+		content: '<div>room3</div>',
+        latlng: new kakao.maps.LatLng(35.08573641192665, 129.04315353777156)
     },
     {
         title: 'room4',
-        latlng: new kakao.maps.LatLng(35.084026731169395, 129.04260110129545)
+		content: '<div>room4</div>',
+        latlng: new kakao.maps.LatLng(35.086038619088974,129.04393673947732)
     },
 	{
 		title: 'room5',
-        latlng: new kakao.maps.LatLng(35.08116793504528, 129.04432770695033)
+		content: '<div>room5</div>',
+        latlng: new kakao.maps.LatLng(35.08675923240828, 129.04368885857647)
 	}
 ];
-// 마커가 표시될 위치입니다 
-// var markerPosition  = new kakao.maps.LatLng(35.08528183019429, 129.03870752959813); 
-
-// // 마커를 생성합니다
-// var marker = new kakao.maps.Marker({
-//     position: markerPosition
-// });
-
-// // 마커가 지도 위에 표시되도록 설정합니다
-// marker.setMap(map);
-
     
 for (var i = 0; i < positions.length; i ++) {
     
@@ -58,12 +70,37 @@ for (var i = 0; i < positions.length; i ++) {
     var marker = new kakao.maps.Marker({
         map: map, // 마커를 표시할 지도
         position: positions[i].latlng, // 마커를 표시할 위치
-        title : positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
     });
+
+	// 마커 위에 커스텀오버레이를 표시합니다
+	// 마커를 중심으로 커스텀 오버레이를 표시하기위해 CSS를 이용해 위치를 설정했습니다
+	var overlay = new kakao.maps.CustomOverlay({
+		content: positions[i].content,
+		map: map,
+		position: positions[i].latlng 
+	});
+
+	// 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
+	// kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
+    // kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
+	// 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
+	kakao.maps.event.addListener(marker, 'click', openOverlay(map, marker, overlay));
+
 }
 
-// 아래 코드는 지도 위의 마커를 제거하는 코드입니다
-// marker.setMap(null);    
+// 인포윈도우를 표시하는 클로저를 만드는 함수입니다 
+function openOverlay(map, marker, overlay) {
+    return function() {
+        overlay.setMap(map)
+    };
+}
+
+// 인포윈도우를 닫는 클로저를 만드는 함수입니다 
+function closeOverlay(overlay) {
+    return function() {
+        overlay.setMap(null);
+    };
+}
 </script>
 </body>
 </html>
